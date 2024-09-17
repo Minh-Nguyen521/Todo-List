@@ -1,9 +1,17 @@
-import "./css/index.css"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Index from "./Index/Index.jsx";
+import Login from "./Login/Login.jsx";
+import "./css/index.css";
 
 function App() {
   return (
-    <h1>asdfkjsf</h1>
-  )
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/index" element={<Index />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;

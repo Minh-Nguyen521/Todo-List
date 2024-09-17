@@ -22,6 +22,7 @@ func Register(c *gin.Context) {
 	var userFound models.User
 	initializers.DB.Where("username=?", registerInput.Username).Find(&userFound)
 
+
 	if userFound.UserID != 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "username already used"})
 		return
@@ -40,9 +41,6 @@ func Register(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "register success",
-		"data": gin.H{
-			"user": user,
-		},
 	})
 }
 
@@ -82,6 +80,8 @@ func Login(c *gin.Context) {
 		"message": "login success",
 		"data": gin.H{
 			"token": token,
+			"userID" : userFound.UserID,
+			"username": userFound.Username,
 		},
 	})
 }

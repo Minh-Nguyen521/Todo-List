@@ -1,14 +1,16 @@
 package models
 
+import "time"
+
 type Task struct {
-	TaskID      uint   `gorm:"primaryKey"`
-	UserID      uint   `gorm:"not null"`
-	Title       string `gorm:"not null"`
-	Description string `gorm:"not null"`
-	Priority    string `gorm:"not null"`
-	Repeat      string `gorm:"default:false"`
-	Status      string `gorm:"default:false"`
-	Deadline    string `gorm:"default:false"`
+	TaskID      uint      `gorm:"primaryKey"`
+	UserID      uint      `gorm:"not null"`
+	Title       string    `gorm:"not null"`
+	Description string    `gorm:"not null"`
+	Priority    uint      `gorm:"not null"`
+	Repeat      bool      `gorm:"default:false"`
+	Status      bool      `gorm:"default:false"`
+	Deadline    time.Time `gorm:"default:null"`
 }
 
 type NewTaskDTO struct {
@@ -16,17 +18,17 @@ type NewTaskDTO struct {
 	UserID      uint   `json:"user_id"`
 	Title       string `json:"title" binding:"required"`
 	Description string `json:"description" binding:"required"`
-	Priority    string `json:"priority" binding:"required"`
-	Repeat      string `json:"repeat"`
-	Status      string `json:"status"`
-	Deadline    string `json:"deadline"`
+	Priority    uint   `json:"priority" binding:"required"`
+	Repeat      bool   `json:"repeat"`
+	Status      bool   `json:"status"`
+	Deadline    time.Time `json:"deadline"` // You can parse this into a time.Time in the handler
 }
 
-type UpdateTaskDTO struct {
+type EditTaskDTO struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
-	Priority    string `json:"priority"`
-	Repeat      string `json:"repeat"`
-	Status      string `json:"status"`
-	Deadline    string `json:"deadline"`
+	Priority    uint   `json:"priority"`
+	Repeat      bool   `json:"repeat"`
+	Status      bool   `json:"status"`
+	Deadline    time.Time `json:"deadline"` // Again, parse this into time.Time in the handler
 }

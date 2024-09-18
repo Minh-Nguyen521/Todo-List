@@ -45,12 +45,12 @@ export default function ShowTasks() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8 bg-white">
+    <div className="w-4/5 mx-auto mt-4 bg-white">
       <ul className="divide-y divide-gray-200 " role="list">
         {todos.map((todo) => (
           <li
             key={todo.Title}
-            className="flex items-center justify-between py-3 px-3 ml-auto"
+            className="flex items-center justify-between py-3 px-3 hover:bg-gray-50"
           >
             <div className="flex items-center">
               <Checkbox.Root

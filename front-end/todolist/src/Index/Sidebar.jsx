@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import TaskFormModal from "./newTaskForm";
-import logo from "./image/owner.jpg";
+import logo from "./image/tmp.jpeg";
 
 const Sidebar = () => {
   const [showTaskForm, setShowTaskForm] = useState(false);

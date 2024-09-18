@@ -32,7 +32,7 @@ func NewTask(c *gin.Context) {
 		Priority:    newTaskInput.Priority,
 		Repeat:      newTaskInput.Repeat,
 		Status:      newTaskInput.Status,
-		Deadline:    time.Time{},
+		Deadline:    time.Now(),
 	}
 
 	res := initializers.DB.Create(&task)

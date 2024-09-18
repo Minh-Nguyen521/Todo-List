@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import fetchNewTask from "./fetchNewTask";
+import fetchEditTask from "./fetchEditTask";
 import Button from "@mui/material/Button"; // MUI Button
 import TextField from "@mui/material/TextField"; // MUI TextField
 import Select from "@mui/material/Select"; // MUI Select
@@ -14,73 +14,62 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 
-function NewTaskForm({
-  show,
-  onClose,
-  title,
-  setTitle,
-  description,
-  setDescription,
-}) {
+function EditTask({ show, onClose, todo }) {
+  const initialTodo = {
+    Title: "",
+    Description: "",
+    Priority: 1,
+    Repeat: false,
+    Status: false,
+  };
+  const [newTodo, setNewTodo] = useState(todo);
   const [error, setError] = useState("");
-  const [project, setProject] = useState(""); // State for select value
-  const modalRef = useRef(null);
+  const [project, setProject] = useState("");
 
-  const handleNewTask = async (e) => {
+  const modalRef = useRef(null);
+  const handleEditTask = async (e) => {
     e.preventDefault();
     setError("");
 
-    if (!title || !description) {
+    console.log(newTodo);
+    if (!newTodo.Title || !newTodo.Description) {
       setError("Please fill in all fields");
       return;
     }
-
-    const response = await fetchNewTask({
-      Title: title,
-      Description: description,
-      Priority: 1,
-      Repeat: false,
-      status: false,
-    });
-
+    const response = await fetchEditTask(newTodo);
     if (response.error) {
       setError(response.error);
       return;
     }
-
-    setTitle("");
-    setDescription("");
-    setError("");
+    setNewTodo(initialTodo);
     window.location.reload();
     onClose();
   };
 
   useEffect(() => {
+    console.log(newTodo);
+
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
         onClose();
       }
     };
-
     if (show) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [show, onClose]);
-
   if (!show) return null;
-
   return (
     <div className="fixed inset-0 bg-opacity-50 flex justify-center items-center">
       <div ref={modalRef} className="bg-white p-6 w-100 rounded shadow-lg">
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold">Add Task</h3>
+            <h3 className="text-lg font-semibold">Edit Task</h3>
             <button onClick={onClose} aria-label="Close form">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -98,18 +87,18 @@ function NewTaskForm({
               </svg>
             </button>
           </div>
-
-          <form onSubmit={handleNewTask}>
+          <form onSubmit={handleEditTask}>
             {/* Task name input using MUI TextField */}
             <TextField
               label="Task name"
               variant="outlined"
               fullWidth
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={newTodo.Title}
+              onChange={(e) =>
+                setNewTodo({ ...newTodo, Title: e.target.value })
+              }
               margin="normal"
             />
-
             {/* Task description input using MUI TextField with multiline */}
             <TextField
               label="Description"
@@ -117,11 +106,12 @@ function NewTaskForm({
               fullWidth
               multiline
               rows={4}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={newTodo.Description}
+              onChange={(e) =>
+                setNewTodo({ ...newTodo, Description: e.target.value })
+              }
               margin="normal"
             />
-
             {/* Task action buttons */}
             <div className="flex space-x-2">
               <Button variant="outlined" startIcon={<CalendarIcon />}>
@@ -137,9 +127,7 @@ function NewTaskForm({
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </div>
-
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-
             {/* Material UI Select for project selection */}
             <FormControl fullWidth margin="normal">
               <InputLabel id="project-select-label">Project</InputLabel>
@@ -157,13 +145,12 @@ function NewTaskForm({
                 {/* Add more project options here */}
               </Select>
             </FormControl>
-
             <div className="mt-6 flex items-center justify-between">
               <Button variant="text" onClick={onClose}>
                 Cancel
               </Button>
-              <Button color="primary" type="submit" onClick={handleNewTask}>
-                Add task
+              <Button color="primary" type="submit" onClick={handleEditTask}>
+                Edit task
               </Button>
             </div>
           </form>
@@ -172,5 +159,4 @@ function NewTaskForm({
     </div>
   );
 }
-
-export default NewTaskForm;
+export default EditTask;

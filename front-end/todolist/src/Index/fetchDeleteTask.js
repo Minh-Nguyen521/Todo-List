@@ -1,7 +1,8 @@
 import config from "../Config/Config";
+import getCookie from "../cookie/getCookie";
 
 const fetchDeleteTask = async (id) => {
-  // const Token = localStorage.getItem("token");
+  const Token = getCookie("token");
   const response = await fetch(
     `http://${config.IP}${config.Port}/tasks/delete/${id}`,
     {

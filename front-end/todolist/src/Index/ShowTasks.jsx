@@ -3,38 +3,54 @@ import { Pencil, Square, MessageSquare } from "lucide-react";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import { IconButton } from "@mui/material";
 import fetchGetTask from "./fetchGetTask";
+import fetchDeleteTask from "./fetchDeleteTask";
+import EditTask from "./EditTask";
 
 export default function ShowTasks() {
   const [todos, setTodos] = useState([]);
+  const [show, setShow] = useState(false);
 
-  const handleEditTask = () => {};
+  const [task, setTask] = useState({
+    TaskID: "",
+    Title: "",
+    Description: "",
+    Priority: 1,
+    Repeat: false,
+    Status: false,
+  });
+
+  const handleDeleteTask = async (TaskID) => {
+    console.log(TaskID);
+    fetchDeleteTask(TaskID);
+    window.location.reload();
+  };
+
+  const handleEditTask = (todo) => () => {
+    setTask(todo);
+    setShow(true);
+  };
 
   useEffect(() => {
     async function GetTask() {
       const data = await fetchGetTask();
       setTodos(data);
-
-      console.log(data);
     }
 
     GetTask();
   }, []);
 
   const toggleTodo = (TaskID) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.TaskID === TaskID ? { ...todo, Status: !todo.Status } : todo
-      )
-    );
+    handleDeleteTask(TaskID); // Call the delete function
+    setTodos(todos.filter((todo) => todo.TaskID !== TaskID)); // Remove the task from state
   };
 
   return (
     <div className="max-w-md mx-auto mt-8 bg-white">
-      <ul className="divide-y divide-gray-200" role="list">
+      <ul className="divide-y divide-gray-200 " role="list">
         {todos.map((todo) => (
           <li
             key={todo.Title}
-            className="flex items-center justify-between py-3 px-3"
+            className="flex items-center justify-between py-3 px-3 ml-auto"
           >
             <div className="flex items-center">
               <Checkbox.Root
@@ -52,17 +68,21 @@ export default function ShowTasks() {
               <label
                 htmlFor={`todo-${todo.TaskID}`}
                 className={
-                  todo.Status ? "line-through text-gray-500" : "text-gray-900"
+                  todo.Status
+                    ? "line-through text-gray-500 flex flex-row"
+                    : "text-gray-900 flex flex-row"
                 }
               >
-                {todo.Description}
+                {todo.Title} | {todo.Description}
               </label>
             </div>
             <div className="flex items-center space-x-1">
-              <IconButton size="small" aria-label="Edit">
-                {/* <button onClick={handleEditTask}> */}
+              <IconButton
+                size="small"
+                aria-label="Edit"
+                onClick={handleEditTask(todo)}
+              >
                 <Pencil className="w-4 h-4" />
-                {/* </button> */}
               </IconButton>
               <IconButton size="small" aria-label="Duplicate">
                 <Square className="w-4 h-4" />
@@ -73,7 +93,15 @@ export default function ShowTasks() {
             </div>
           </li>
         ))}
+        {todos.length === 0 && (
+          <div className="flex items-center justify-center py-3 px-3">
+            <p className="text-gray-500">No tasks available</p>
+          </div>
+        )}
       </ul>
+      {show && (
+        <EditTask show={show} onClose={() => setShow(false)} todo={task} />
+      )}
     </div>
   );
 }
